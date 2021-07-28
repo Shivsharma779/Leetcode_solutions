@@ -1,13 +1,35 @@
 class Solution {
 public:
-        int divide(int A, int B) {
-        if (A == INT_MIN && B == -1) return INT_MAX;
-        int a = abs(A), b = abs(B), res = 0, x = 0;
-        while (a - b >= 0) {
-            for (x = 0; a - (b << x << 1) >= 0; x++);
-            res += 1 << x;
-            a -= b << x;
-        }
-        return (A > 0) == (B > 0) ? res : -res;
-    }
+     int divide(int D, int d) 
+	{
+        long dividend = (long) D;
+        long divisor = (long) d;
+        
+        if (dividend == INT32_MIN && divisor == -1) 
+            return INT32_MAX;
+            
+		bool negative_result = (dividend < 0) ^ (divisor < 0);
+
+		divisor = labs(divisor);
+		dividend = labs(dividend);
+
+		if (divisor > dividend)
+			return 0;
+
+		long quotient = (long) 1;
+		long temp = (long) divisor;
+		
+		while ((temp << 1) <= dividend) 
+		{
+			temp <<= 1;
+			quotient <<= 1;
+		}
+		
+		quotient += divide((dividend - temp), divisor);
+
+		if (negative_result)
+			quotient = -quotient;
+		
+		return quotient;
+	}
 };
