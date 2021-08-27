@@ -1,17 +1,13 @@
 class Solution {
 public:
-    void helper(string beg, string &end, unordered_set<string> &mp,
+    unordered_map<string, unordered_set<string>> adj;
+    
+    void helper( string &end, unordered_set<string> &mp,
                 vector<string> &temp ,vector<vector<string>> &res, int &minlv,
-                unordered_set<string> curlv)
+                unordered_set<string> &curlv)
     {
         
-        if(beg=="log")
-        {
-            for(auto s:curlv)
-                cout<<s<<" ";
-            cout<<"\n";
-        }
-        
+        vector<string> call;
         //cout<<beg<<" ";
         /*
         for(auto s:temp)
@@ -20,41 +16,50 @@ public:
         */
         if(temp.size() > minlv)
             return;
-        
-        if(temp.size() == minlv)
-        {
-            if(beg==end)
-                res.push_back(temp);
-            return;
-        }
-        
-        
+
         unordered_set<string> nextlv;
         
-        for(int i=0;i<beg.size();i++)
+        for(auto beg:curlv)
         {
-            char cur_char = beg[i];
-            for(char  c='a';c<='z';c++)
+            if(temp.size() == minlv)
             {
-                if(cur_char != c)
+                if(beg==end)
+                    res.push_back(temp);
+                return;
+            }
+            
+            
+            for(int i=0;i<beg.size();i++)
+            {
+                char cur_char = beg[i];
+                for(char  c='a';c<='z';c++)
                 {
-                    beg[i]=c;
-                    if(mp.find(beg)!=mp.end() && curlv.find(beg)==curlv.end())
+                    if(cur_char != c)
                     {
-                        nextlv.insert(beg);
+                        string old = beg;
+                        beg[i]=c;
+                        if(mp.find(beg)!=mp.end() && curlv.find(beg)==curlv.end())
+                        {
+                            adj[old].insert(beg);
+                            call.push_back(old);
+                            nextlv.insert(beg);
+                        }
                     }
                 }
+                beg[i] = cur_char;
             }
-            beg[i] = cur_char;
         }
         
-        for(auto beg:nextlv)
+        for(auto old:call)
         {
-            mp.erase(beg);
-            temp.push_back(beg);
-            helper(beg,end,mp,temp,res,minlv,nextlv);
-            temp.pop_back();
-            mp.insert(beg);
+            for(auto beg:adj[old])
+            {    
+                mp.erase(beg);
+                temp.push_back(beg);
+                helper(end,mp,temp,res,minlv,nextlv);
+                temp.pop_back();
+                mp.insert(beg);
+            }
         }
     }
     
@@ -118,7 +123,7 @@ public:
         temp.push_back(beginWord);
         curlv.insert(beginWord);
         
-        helper(beginWord,endWord,mp,temp,res,minlv,curlv);
+        helper(endWord,mp,temp,res,minlv,curlv);
         
         return res;
     }
