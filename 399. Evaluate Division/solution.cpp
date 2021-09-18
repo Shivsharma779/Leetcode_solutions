@@ -1,6 +1,13 @@
 class Solution {
 public:
+    /* 
+    1. This is a graph problem as we have to find the path from the numerator to denominator
+    2. Create an adj list with key as num and value as pair of {denominator and its ans};
+    3. Didnt do a dfs solution as it might stuck in a loop
+    4. Do BFS to find the solution if both numerator and denominator are present in graph
     
+    
+    */
     double bfs(vector<string> query,unordered_map<string,vector<pair<string,double>>> &adj)
     {
         unordered_set<string> vis;
